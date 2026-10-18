@@ -77,6 +77,14 @@ Alternatively copy the folder skills/agentkyb-vendor-check into the agent's conf
 
 **Registry publication is separate:** this GitHub repository does not prove a ClawHub listing, skills.sh indexing, or actual external agent usage.
 
+## x402 Bazaar discovery (PayAI)
+
+AgentKYB's paid `vendor_preflight` service is also present in the [PayAI Bazaar catalog](https://facilitator.payai.network/discovery/resources?type=mcp&network=eip155%3A8453&payTo=0x63Ef759d667394EFB6dd9403fD60ac7B619d3018). The catalog entry is a **historical listing** (last updated 2026-09-22), so its metadata may differ from the live service. The live x402 challenge is authoritative for current resource tags, Base mainnet amount (50,000 micro-USDC = 0.05 USDC), recipient and Bazaar schema.
+
+The 2026-10-18 production release prioritizes the following agent search intents: `kyb`, `verify-vendor-before-paying`, `supplier-risk`, `counterparty-check` and `x402`. A facilitator catalog refresh is still pending. Being indexed is not proof of external buyers, paid calls or revenue.
+
+For independent catalog verification, see [the reproducible read-only audit workflow](.github/workflows/audit-x402-catalogs.yml). Never send funds merely to refresh a listing without an explicitly authorized payment plan.
+
 ## Paid AgentKYB vendor verification
 
 | Property | Value |
