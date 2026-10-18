@@ -53,6 +53,16 @@ const { guard, payment } = await guardedSigner({ ...trusted, ...observed });
 
 The SDK **does not** parse x402 challenges, sign transactions, authorize spending, settle funds, enforce budgets or perform KYB. The caller must enforce user consent, signer policy, spend limits and chain/asset constraints. amount_usd must be a normalized USDC decimal amount, not raw atomic units.
 
+## Find on ClawHub
+
+AgentKYB Vendor Check is listed in the public ClawHub registry:
+
+- [ClawHub skill: @andy229651/agentkyb-vendor-check](https://clawhub.ai/andy229651/skills/agentkyb-vendor-check)
+- Install in an OpenClaw workspace: `openclaw skills install @andy229651/agentkyb-vendor-check`
+- Or use the standalone CLI: `clawhub install @andy229651/agentkyb-vendor-check`
+
+This skill provides instructions and links to an optional paid KYB service. Installation itself does not authorize a payment or grant wallet access.
+
 ## Install the agent skill
 
 Read the [AgentKYB Vendor Check skill](skills/agentkyb-vendor-check/SKILL.md).
