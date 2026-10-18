@@ -28,7 +28,7 @@ jobs:
       topics: "kyb,x402,vendor-verification,payment-safety,supplier-risk,counterparty-risk"
 
   publish:
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.publish == true }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.publish == true) || (github.event_name == 'push' && github.event.head_commit.message == 'publish-clawhub-once-authorized') }}
     uses: openclaw/clawhub/.github/workflows/skill-publish.yml@c3dd39f527710b39e6aec6de0f05ab59ba25a41c
     with:
       skill_path: skills/agentkyb-vendor-check
