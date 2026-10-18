@@ -37,6 +37,10 @@ Install SDK source from GitHub and call assertPaymentAllowed immediately **befor
 
 No skill installation grants permission to spend funds. The paid AgentKYB service supplies decision-support evidence only, not legal/compliance approval. The guard compares declared intent but does not verify DNS provenance, merchant ownership or wallet reputation. Do not assume indexing means a paid call was executed.
 
+## Discovery aliases
+
+Search intents: verify vendor, before pay vendor, KYB, supplier risk, counterparty check, safe x402 payment, payment guard. The agent must independently authorize and fund any paid verification; discovery alone does not authorize a transfer.
+
 ## References
 
 - https://agentkyb.andy229651.workers.dev/.well-known/x402
