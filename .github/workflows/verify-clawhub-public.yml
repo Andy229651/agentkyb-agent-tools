@@ -1,0 +1,54 @@
+name: Verify ClawHub public agent discovery
+on:
+  push:
+    paths:
+      - ".github/workflows/verify-clawhub-public.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  public-discovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Query anonymous ClawHub APIs (no token or private source)
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import { setTimeout as wait } from 'node:timers/promises';
+          const base = 'https://clawhub.ai/api/v1';
+          const slug = 'agentkyb-vendor-check';
+          const get = async path => {
+            const r = await fetch(base + path, {
+              headers: { accept: 'application/json', 'user-agent': 'AgentKYB-Public-Discovery-Verification/1.0' },
+              signal: AbortSignal.timeout(15000)
+            });
+            const payload = r.ok ? await r.json().catch(() => null) : null;
+            return { status: r.status, payload };
+          };
+          let detail;
+          for (let attempt = 1; attempt <= 5; attempt++) {
+            detail = await get('/skills/' + slug);
+            console.log('ANONYMOUS_CLAWHUB_DETAIL_CHECK', JSON.stringify({ attempt, status: detail.status,
+              owner: detail.payload?.owner?.handle ?? null, version: detail.payload?.latestVersion?.version ?? null }));
+            if (detail.status === 200 && detail.payload?.latestVersion?.version) break;
+            if (attempt < 5) await wait(12000);
+          }
+          const owner = detail.payload?.owner?.handle;
+          const published = detail.status === 200 && detail.payload?.skill?.slug === slug && Boolean(owner) && Boolean(detail.payload?.latestVersion?.version);
+          if (published) {
+            console.log('CLAWHUB_PUBLIC_DETAIL_OK', JSON.stringify({ slug, owner, version: detail.payload.latestVersion.version,
+              url: 'https://clawhub.ai/' + encodeURIComponent(owner) + '/skills/' + slug }));
+          }
+          for (const query of ['verify vendor before paying', 'x402 payment guard']) {
+            const search = await get('/search?q=' + encodeURIComponent(query) + '&limit=50');
+            const found = (search.payload?.results ?? []).find(item => item.slug === slug && (!owner || item.ownerHandle === owner));
+            console.log('AGENT_COLD_START_SEARCH', JSON.stringify({ query, status: search.status, found: Boolean(found), rank: found ? search.payload.results.indexOf(found) + 1 : null }));
+          }
+          if (!published) throw new Error('CLAWHUB_PUBLIC_DETAIL_NOT_YET_AVAILABLE');
+          NODE
