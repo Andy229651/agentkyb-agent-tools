@@ -25,7 +25,7 @@ jobs:
       skill_path: skills/agentkyb-vendor-check
       dry_run: true
       categories: integrations
-      topics: "kyb,x402,vendor-verification,payment-safety,supplier-risk,counterparty-risk"
+      topics: "kyb,x402,vendor-verification,payment-safety,counterparty-risk"
 
   publish:
     if: ${{ (github.event_name == 'workflow_dispatch' && inputs.publish == true) || (github.event_name == 'push' && github.event.head_commit.message == 'publish-clawhub-once-authorized') }}
@@ -35,6 +35,6 @@ jobs:
       dry_run: false
       changelog: "Initial public AgentKYB vendor-verification skill for x402 agent payment safety."
       categories: integrations
-      topics: "kyb,x402,vendor-verification,payment-safety,supplier-risk,counterparty-risk"
+      topics: "kyb,x402,vendor-verification,payment-safety,counterparty-risk"
     secrets:
       clawhub_token: ${{ secrets.CLAWHUB_TOKEN }}
