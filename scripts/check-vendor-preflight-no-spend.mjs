@@ -34,6 +34,14 @@ try {
   const recipient = String(accepted?.payTo || accepted?.pay_to || '').toLowerCase();
   if (recipient !== expectedWallet) throw new Error('UNEXPECTED_PAYMENT_RECIPIENT');
   if (String(accepted?.amount) !== '50000') throw new Error('UNEXPECTED_MICRO_USDC_AMOUNT');
+  const expectedTags = ['kyb', 'verify-vendor-before-paying', 'supplier-risk', 'counterparty-check', 'x402'];
+  if (JSON.stringify(challenge.resource?.tags) !== JSON.stringify(expectedTags)) {
+    throw new Error('LIVE_BAZAAR_TAGS_NOT_CURRENT: ' + JSON.stringify(challenge.resource?.tags));
+  }
+  if (challenge.resource?.serviceName !== 'AgentKYB' || challenge.resource?.url !== endpoint) {
+    throw new Error('LIVE_BAZAAR_RESOURCE_IDENTITY_CHANGED');
+  }
+  console.log('LIVE_BAZAAR_INTENT_METADATA_OK', JSON.stringify({ tags: challenge.resource.tags, service: challenge.resource.serviceName }));
   console.log('ANONYMOUS_VENDOR_PAYMENT_CHALLENGE_OK', JSON.stringify({
     network: accepted.network, price_usdc: '0.05', wallet_matches_pinned: true,
     payment_signed: false, settlement_attempted: false
