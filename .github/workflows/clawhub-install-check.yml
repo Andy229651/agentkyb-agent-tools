@@ -23,6 +23,6 @@ jobs:
           mkdir -p "$RUNNER_TEMP/agentkyb-public-only"
           npm install -g clawhub@0.23.3 --no-audit --no-fund
           clawhub --workdir "$RUNNER_TEMP/agentkyb-public-only" install @andy229651/agentkyb-vendor-check
-          test -f "$RUNNER_TEMP/agentkyb-public-only/skills/agentkyb-vendor-check/SKILL.md"
-          grep -q 'vendor_preflight' "$RUNNER_TEMP/agentkyb-public-only/skills/agentkyb-vendor-check/SKILL.md"
+          test -f "$RUNNER_TEMP/agentkyb-public-only/skills/@andy229651/agentkyb-vendor-check/SKILL.md"
+          grep -q 'vendor_preflight' "$RUNNER_TEMP/agentkyb-public-only/skills/@andy229651/agentkyb-vendor-check/SKILL.md"
           echo "ANONYMOUS_CLAWHUB_INSTALL_PASS"
