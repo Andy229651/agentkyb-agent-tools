@@ -61,4 +61,24 @@ for(const target of targets){
   await wait(400);
  }
 }
+
+const searchQueries=['verify vendor before paying','KYB supplier risk','counterparty check'];
+for (const catalog of catalogs.filter(c=>c.name!=='x402-org')) {
+ for (const query of searchQueries) {
+  let responseResult={status:'unavailable'};
+  try {
+   const u=catalog.base+'/discovery/search?'+new URLSearchParams({query,limit:'30'});
+   const response=await fetch(u,{headers:{accept:'application/json'},signal:AbortSignal.timeout(15000)});
+   const body=await response.text();
+   if(response.ok) {
+    const data=JSON.parse(body);
+    const matches=getItems(data).filter(x=>norm(x.resource?.url||x.resource||x.url).includes('agentkyb.andy229651.workers.dev/mcp-x402'));
+    responseResult={status:'ok',http:200,returned:getItems(data).length,
+      matches:matches.map(summary),partialResults:data.partialResults||false};
+   } else responseResult={status:'unavailable',http:response.status};
+  } catch(e){responseResult={status:'unavailable',error:String(e).slice(0,160)};}
+  console.log('X402_UNBRANDED_SEARCH_EVIDENCE',JSON.stringify({catalog:catalog.name,query,...responseResult}));
+ }
+}
+
 console.log('INTERPRETATION',{rule:'Historical catalog entries prove listings only, not current metadata, paid agent usage or external revenue. Absence from one page is inconclusive when catalog paginates.'});
