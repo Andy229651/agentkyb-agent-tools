@@ -1,0 +1,37 @@
+name: Review submitted AgentKYB skill on ClawHub
+on:
+  push:
+    paths:
+      - ".github/workflows/clawhub-review-once.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.head_commit.message == 'review-clawhub-submission-once' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify ClawHub token is configured
+        shell: bash
+        env:
+          CLAWHUB_TOKEN: ${{ secrets.CLAWHUB_TOKEN }}
+        run: |
+          if [[ -z "$CLAWHUB_TOKEN" ]]; then
+            echo "::error::CLAWHUB_TOKEN is not configured"
+            exit 1
+          fi
+      - name: Run ClawHub review scan on initial submitted version
+        shell: bash
+        env:
+          CLAWHUB_TOKEN: ${{ secrets.CLAWHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          npm install --global clawhub@0.23.3 --no-audit --no-fund
+          clawhub login --token "$CLAWHUB_TOKEN"
+          clawhub scan --slug agentkyb-vendor-check --version 1.0.0 --update --json
