@@ -1,0 +1,39 @@
+name: Publish AgentKYB skill to ClawHub
+on:
+  push:
+    branches: [main]
+    paths:
+      - "skills/agentkyb-vendor-check/**"
+      - ".github/workflows/publish-clawhub.yml"
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Publish AgentKYB skill to ClawHub (requires CLAWHUB_TOKEN secret)"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    if: ${{ github.event_name == 'push' || inputs.publish != true }}
+    uses: openclaw/clawhub/.github/workflows/skill-publish.yml@c3dd39f527710b39e6aec6de0f05ab59ba25a41c
+    with:
+      skill_path: skills/agentkyb-vendor-check
+      dry_run: true
+      categories: integrations
+      topics: "kyb,x402,vendor-verification,payment-safety,supplier-risk,counterparty-risk"
+
+  publish:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.publish == true }}
+    uses: openclaw/clawhub/.github/workflows/skill-publish.yml@c3dd39f527710b39e6aec6de0f05ab59ba25a41c
+    with:
+      skill_path: skills/agentkyb-vendor-check
+      dry_run: false
+      changelog: "Initial public AgentKYB vendor-verification skill for x402 agent payment safety."
+      categories: integrations
+      topics: "kyb,x402,vendor-verification,payment-safety,supplier-risk,counterparty-risk"
+    secrets:
+      clawhub_token: ${{ secrets.CLAWHUB_TOKEN }}
