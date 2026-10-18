@@ -1,0 +1,26 @@
+name: Public vendor preflight no-spend x402 gate
+on:
+  push:
+    paths:
+      - "scripts/check-vendor-preflight-no-spend.mjs"
+      - ".github/workflows/no-spend-vendor-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  challenge-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install diagnostic MCP client (no wallet dependencies)
+        run: npm install --no-save --no-package-lock --no-audit --no-fund @modelcontextprotocol/client@2.0.0
+      - name: Verify MCP discovery and challenge without paying
+        run: node scripts/check-vendor-preflight-no-spend.mjs
