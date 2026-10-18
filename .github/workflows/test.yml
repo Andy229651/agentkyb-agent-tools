@@ -12,6 +12,8 @@ jobs:
         node-version: [20, 22]
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
@@ -19,3 +21,19 @@ jobs:
       - run: npm run check:skill
       - run: node examples/before-pay.mjs
       - run: npm pack --dry-run --json
+
+  public-install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install SDK from public GitHub source (no checkout or repository token)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/agentkyb-clean"
+          cd "$RUNNER_TEMP/agentkyb-clean"
+          printf '{"private":true,"type":"module"}\n' > package.json
+          npm install --no-audit --no-fund github:Andy229651/agentkyb-agent-tools
+          node --input-type=module -e "import('@agentkyb/payment-guard').then(m => { if(m.PAYMENT_GUARD_VERSION !== '0.1.0') process.exit(1); console.log('PUBLIC_GITHUB_SDK_INSTALL_OK'); })"
