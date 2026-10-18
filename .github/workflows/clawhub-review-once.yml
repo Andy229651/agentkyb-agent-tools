@@ -1,8 +1,5 @@
 name: Review submitted AgentKYB skill on ClawHub
 on:
-  push:
-    paths:
-      - ".github/workflows/clawhub-review-once.yml"
   workflow_dispatch:
 
 permissions:
@@ -10,7 +7,7 @@ permissions:
 
 jobs:
   scan:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.head_commit.message == 'review-clawhub-submission-once' }}
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     timeout-minutes: 55
     steps:
