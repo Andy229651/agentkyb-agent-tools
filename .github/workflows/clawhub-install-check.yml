@@ -1,0 +1,28 @@
+name: Anonymous ClawHub Skill Installation Gate
+on:
+  push:
+    paths:
+      - ".github/workflows/clawhub-install-check.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  anonymous-install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install skill from public registry in isolated workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/agentkyb-public-only"
+          npm install -g clawhub@0.23.3 --no-audit --no-fund
+          clawhub --workdir "$RUNNER_TEMP/agentkyb-public-only" install @andy229651/agentkyb-vendor-check
+          test -f "$RUNNER_TEMP/agentkyb-public-only/skills/agentkyb-vendor-check/SKILL.md"
+          grep -q 'vendor_preflight' "$RUNNER_TEMP/agentkyb-public-only/skills/agentkyb-vendor-check/SKILL.md"
+          echo "ANONYMOUS_CLAWHUB_INSTALL_PASS"
