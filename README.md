@@ -9,6 +9,10 @@ This repository distributes two related tools:
 
 Agent discovery intents: **verify vendor before paying**, **KYB**, **supplier risk**, **counterparty check**, **safe autonomous payment**, **x402 payment safety**, **payment guard**, **before pay**.
 
+## Integrate AgentKYB into your agent (7-day scoped pilot)
+
+Building an MCP agent, autonomous procurement workflow or payment orchestration product? Read the [7-day integration pilot proposal](docs/INTEGRATION_PILOT.md). It outlines a no-spend first test, the independently authorized optional 0.05 USDC vendor check, evidence requirements and scope limits. Partnerships and paid integration fees are **not pre-agreed**.
+
 ## Quickstart — free offline demo
 
 Requires Node.js 20+.
