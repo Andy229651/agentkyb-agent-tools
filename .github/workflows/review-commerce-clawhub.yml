@@ -1,0 +1,33 @@
+name: Verify AgentKYB Commerce Guard ClawHub review
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/review-commerce-clawhub.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.head_commit.message == 'review-commerce-skill-once' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Scan submitted Commerce Guard skill (no wallet or external charges)
+        shell: bash
+        env:
+          CLAWHUB_TOKEN: ${{ secrets.CLAWHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$CLAWHUB_TOKEN" ]]; then
+            echo "::error::CLAWHUB_TOKEN is missing"
+            exit 1
+          fi
+          npm install --global clawhub@0.23.3 --no-audit --no-fund
+          clawhub login --token "$CLAWHUB_TOKEN"
+          clawhub scan --slug agentkyb-commerce-guard --version 1.0.0 --update --json
