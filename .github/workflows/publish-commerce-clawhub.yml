@@ -1,0 +1,52 @@
+name: Publish AgentKYB Commerce Guard skill to ClawHub
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/publish-commerce-clawhub.yml"
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Publish Commerce Guard skill using existing CLAWHUB_TOKEN"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm run check:commerce-skill
+      - run: npm test
+
+  preview:
+    needs: validate
+    uses: openclaw/clawhub/.github/workflows/skill-publish.yml@c3dd39f527710b39e6aec6de0f05ab59ba25a41c
+    with:
+      skill_path: skills/agentkyb-commerce-guard
+      dry_run: true
+      categories: integrations
+      topics: "agent-commerce,ecommerce,checkout-safety,shopping,payment-guard"
+
+  publish:
+    needs: validate
+    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.publish == true) || (github.event_name == 'push' && github.event.head_commit.message == 'publish-commerce-skill-once') }}
+    uses: openclaw/clawhub/.github/workflows/skill-publish.yml@c3dd39f527710b39e6aec6de0f05ab59ba25a41c
+    with:
+      skill_path: skills/agentkyb-commerce-guard
+      dry_run: false
+      changelog: "Introduce free local apparel/ecommerce checkout consistency guard for AI agents; no payments, wallets or merchant checkout integration."
+      categories: integrations
+      topics: "agent-commerce,ecommerce,checkout-safety,shopping,payment-guard"
+    secrets:
+      clawhub_token: ${{ secrets.CLAWHUB_TOKEN }}
