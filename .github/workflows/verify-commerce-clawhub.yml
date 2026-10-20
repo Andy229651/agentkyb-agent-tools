@@ -27,7 +27,19 @@ jobs:
             const r=await fetch(base+path,{headers:{accept:'application/json'},signal:AbortSignal.timeout(16000)});
             return {status:r.status,body:r.ok?await r.json():null};
           };
-          const detail=await request('/skills/'+slug);
+          let detail;
+          for(let attempt=1;attempt<=4;attempt++){
+            detail=await request('/skills/'+slug);
+            console.log('COMMERCE_CLAWHUB_PUBLIC_PENDING',JSON.stringify({
+              attempt,http:detail.status,slug:detail.body?.skill?.slug??null,
+              owner:detail.body?.owner?.handle??null,version:detail.body?.latestVersion?.version??null,
+              catalogState:detail.body?.skill?.moderationStatus??detail.body?.skill?.status??null
+            }));
+            if(detail.status===200&&detail.body?.skill?.slug===slug&&
+              detail.body?.owner?.handle==='andy229651'&&
+              detail.body?.latestVersion?.version)break;
+            if(attempt<4)await new Promise(r=>setTimeout(r,10000));
+          }
           if(detail.status!==200||detail.body?.skill?.slug!==slug||
             detail.body?.owner?.handle!=='andy229651'||
             !detail.body?.latestVersion?.version){
