@@ -20,6 +20,7 @@ jobs:
       - run: npm test
       - run: npm run check:skill
       - run: node examples/before-pay.mjs
+      - run: npm run demo:commerce
       - run: npm pack --dry-run --json
 
   public-install:
@@ -37,3 +38,4 @@ jobs:
           printf '{"private":true,"type":"module"}\n' > package.json
           npm install --no-audit --no-fund github:Andy229651/agentkyb-agent-tools
           node --input-type=module -e "import('@agentkyb/payment-guard').then(m => { if(m.PAYMENT_GUARD_VERSION !== '0.1.0') process.exit(1); console.log('PUBLIC_GITHUB_SDK_INSTALL_OK'); })"
+          node --input-type=module -e "import('@agentkyb/payment-guard/commerce').then(m => { if(m.COMMERCE_GUARD_VERSION !== '0.1.0') process.exit(1); console.log('COMMERCE_GUARD_PUBLIC_SDK_INSTALL_OK'); })"
