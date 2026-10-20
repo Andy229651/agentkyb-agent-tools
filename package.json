@@ -21,7 +21,8 @@
     "check:skill": "node scripts/check-skill.mjs",
     "check:discovery": "node scripts/check-discovery.mjs",
     "test:commerce": "node --test test/commerce-guard.test.mjs",
-    "demo:commerce": "node examples/commerce-checkout.mjs"
+    "demo:commerce": "node examples/commerce-checkout.mjs",
+    "check:commerce-skill": "node scripts/check-commerce-skill.mjs"
   },
   "keywords": [
     "x402",
