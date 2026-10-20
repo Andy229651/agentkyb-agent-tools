@@ -1,0 +1,34 @@
+name: Diagnose Commerce Guard ClawHub publication state
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/diagnose-commerce-clawhub.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  owner-view:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Read owner-visible ClawHub moderation diagnostics (no mutation)
+        shell: bash
+        env:
+          CLAWHUB_TOKEN: ${{ secrets.CLAWHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          test -n "$CLAWHUB_TOKEN"
+          npm install -g clawhub@0.23.3 --no-audit --no-fund
+          clawhub login --token "$CLAWHUB_TOKEN"
+          set +e
+          clawhub inspect @andy229651/agentkyb-commerce-guard
+          INSPECT_STATUS=$?
+          clawhub skill verify agentkyb-commerce-guard
+          VERIFY_STATUS=$?
+          set -e
+          echo "COMMERCE_CLAWHUB_OWNER_DIAG" "inspect_exit=$INSPECT_STATUS" "verify_exit=$VERIFY_STATUS"
+          echo "This workflow is read-only. A clean scan does not lift moderation holds."
