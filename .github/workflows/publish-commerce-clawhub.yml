@@ -1,9 +1,5 @@
 name: Publish AgentKYB Commerce Guard skill to ClawHub
 on:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/publish-commerce-clawhub.yml"
   workflow_dispatch:
     inputs:
       publish:
@@ -40,7 +36,7 @@ jobs:
 
   publish:
     needs: validate
-    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.publish == true) || (github.event_name == 'push' && github.event.head_commit.message == 'publish-commerce-skill-once') }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.publish == true }}
     uses: openclaw/clawhub/.github/workflows/skill-publish.yml@c3dd39f527710b39e6aec6de0f05ab59ba25a41c
     with:
       skill_path: skills/agentkyb-commerce-guard
