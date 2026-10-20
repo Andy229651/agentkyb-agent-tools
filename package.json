@@ -1,14 +1,15 @@
 {
   "name": "@agentkyb/payment-guard",
-  "version": "0.1.0",
-  "description": "Non-custodial pre-payment integrity guard for AI agents and x402 Base USDC payments",
+  "version": "0.2.0",
+  "description": "Non-custodial AgentKYB payment safety and online checkout integrity SDK for AI agents",
   "type": "module",
   "license": "MIT",
   "engines": {
     "node": ">=20"
   },
   "exports": {
-    ".": "./sdk/index.js"
+    ".": "./sdk/index.js",
+    "./commerce": "./sdk/commerce.js"
   },
   "files": [
     "sdk",
@@ -18,7 +19,10 @@
   "scripts": {
     "test": "node --test",
     "check:skill": "node scripts/check-skill.mjs",
-    "check:discovery": "node scripts/check-discovery.mjs"
+    "check:discovery": "node scripts/check-discovery.mjs",
+    "test:commerce": "node --test test/commerce-guard.test.mjs",
+    "demo:commerce": "node examples/commerce-checkout.mjs",
+    "check:commerce-skill": "node scripts/check-commerce-skill.mjs"
   },
   "keywords": [
     "x402",
@@ -30,6 +34,13 @@
     "Base",
     "USDC",
     "MCP",
-    "safe-payment"
+    "safe-payment",
+    "commerce-guard",
+    "ecommerce",
+    "checkout-safety",
+    "online-shopping",
+    "agentic-commerce",
+    "retail",
+    "apparel"
   ]
 }

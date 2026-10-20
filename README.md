@@ -9,6 +9,32 @@ This repository distributes two related tools:
 
 Agent discovery intents: **verify vendor before paying**, **KYB**, **supplier risk**, **counterparty check**, **safe autonomous payment**, **x402 payment safety**, **payment guard**, **before pay**.
 
+## Commerce Guard v0.1 — shopping agents (clothes and online products)
+
+**New local safety SDK:** stop checkout when an AI shopping agent deviates from the authenticated buyer's approval. Check seller, payment payee, SKU, size/color variant, quantities, COP/USD currency, final total, taxes, fees, shipping destination/method, return terms and consent expiration. Decisions: `allow`, `review`, `block`.
+
+This is a **free, non-custodial offline preflight**, not a card payment processor, live store integration, UCP/ACP/AP2 adapter, verified merchant identity service or remotely hosted Commerce Guard API. The application must independently authenticate the buyer's consent and control the actual payment.
+
+**[Commerce Guard integration guide](docs/COMMERCE_GUARD_V0.1.md)** · [Shopping agent skill](skills/agentkyb-commerce-guard/SKILL.md) · [Offline clothes checkout example](examples/commerce-checkout.mjs)
+
+```sh
+npm install github:Andy229651/agentkyb-agent-tools
+```
+
+```js
+import { checkoutPreflight, createCheckoutGate } from '@agentkyb/payment-guard/commerce';
+// The caller loads authenticated first-party consent separately from the checkout.
+const result = checkoutPreflight({authorization, checkout});
+if (result.action !== 'allow') {
+  // REVIEW or BLOCK: never sign, capture funds, or place the order.
+  throw new Error('Buyer approval required: '+result.reasons.map(r=>r.code).join(', '));
+}
+```
+
+Try the completely simulated demo: `npm run demo:commerce`. No orders are placed and no funds move.
+
+---
+
 ## Integrate AgentKYB into your agent (7-day scoped pilot)
 
 Building an MCP agent, autonomous procurement workflow or payment orchestration product? Read the [7-day integration pilot proposal](docs/INTEGRATION_PILOT.md). It outlines a no-spend first test, the independently authorized optional 0.05 USDC vendor check, evidence requirements and scope limits. Partnerships and paid integration fees are **not pre-agreed**.

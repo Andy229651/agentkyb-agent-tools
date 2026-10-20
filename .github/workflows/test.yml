@@ -19,7 +19,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm test
       - run: npm run check:skill
+      - run: npm run check:commerce-skill
       - run: node examples/before-pay.mjs
+      - run: npm run demo:commerce
       - run: npm pack --dry-run --json
 
   public-install:
@@ -35,5 +37,6 @@ jobs:
           mkdir -p "$RUNNER_TEMP/agentkyb-clean"
           cd "$RUNNER_TEMP/agentkyb-clean"
           printf '{"private":true,"type":"module"}\n' > package.json
-          npm install --no-audit --no-fund github:Andy229651/agentkyb-agent-tools
+          npm install --no-audit --no-fund "github:Andy229651/agentkyb-agent-tools#$GITHUB_SHA"
           node --input-type=module -e "import('@agentkyb/payment-guard').then(m => { if(m.PAYMENT_GUARD_VERSION !== '0.1.0') process.exit(1); console.log('PUBLIC_GITHUB_SDK_INSTALL_OK'); })"
+          node --input-type=module -e "import('@agentkyb/payment-guard/commerce').then(m => { if(m.COMMERCE_GUARD_VERSION !== '0.1.0') process.exit(1); console.log('COMMERCE_GUARD_PUBLIC_SDK_INSTALL_OK'); })"
