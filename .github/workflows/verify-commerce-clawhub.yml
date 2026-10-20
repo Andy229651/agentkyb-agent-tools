@@ -1,0 +1,58 @@
+name: Verify Commerce Guard public ClawHub discovery and installation
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verify-commerce-clawhub.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  anonymous-skill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Public catalog details and unbranded buyer-intent searches
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          const base='https://clawhub.ai/api/v1';
+          const slug='agentkyb-commerce-guard';
+          const request=async path=>{
+            const r=await fetch(base+path,{headers:{accept:'application/json'},signal:AbortSignal.timeout(16000)});
+            return {status:r.status,body:r.ok?await r.json():null};
+          };
+          const detail=await request('/skills/'+slug);
+          if(detail.status!==200||detail.body?.skill?.slug!==slug||
+            detail.body?.owner?.handle!=='andy229651'||
+            !detail.body?.latestVersion?.version){
+            throw new Error('Commerce skill not anonymously visible in ClawHub catalog');
+          }
+          console.log('COMMERCE_CLAWHUB_PUBLIC_DETAIL_PASS',JSON.stringify({
+            slug,owner:detail.body.owner.handle,version:detail.body.latestVersion.version,
+            url:'https://clawhub.ai/andy229651/skills/'+slug
+          }));
+          for(const q of ['online shopping','checkout safety','buy clothes agent','agent commerce']){
+            const res=await request('/search?q='+encodeURIComponent(q)+'&limit=50');
+            const results=res.body?.results||[];
+            const rank=results.findIndex(x=>x.slug===slug);
+            console.log('COMMERCE_CLAWHUB_UNBRANDED_SEARCH',JSON.stringify({
+              query:q,http:res.status,found:rank>=0,rank:rank>=0?rank+1:null
+            }));
+          }
+          NODE
+      - name: Anonymous install from ClawHub (no token and no private repository)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/commerce-clean"
+          npm install -g clawhub@0.23.3 --no-audit --no-fund
+          clawhub --workdir "$RUNNER_TEMP/commerce-clean" install @andy229651/agentkyb-commerce-guard
+          test -f "$RUNNER_TEMP/commerce-clean/skills/@andy229651/agentkyb-commerce-guard/SKILL.md"
+          grep -q checkoutPreflight "$RUNNER_TEMP/commerce-clean/skills/@andy229651/agentkyb-commerce-guard/SKILL.md"
+          echo COMMERCE_CLAWHUB_ANONYMOUS_INSTALL_PASS
