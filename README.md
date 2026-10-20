@@ -15,7 +15,7 @@ Agent discovery intents: **verify vendor before paying**, **KYB**, **supplier ri
 
 This is a **free, non-custodial offline preflight**, not a card payment processor, live store integration, UCP/ACP/AP2 adapter, verified merchant identity service or remotely hosted Commerce Guard API. The application must independently authenticate the buyer's consent and control the actual payment.
 
-**[Commerce Guard integration guide](docs/COMMERCE_GUARD_V0.1.md)** · [Shopping agent skill](skills/agentkyb-commerce-guard/SKILL.md) · [Offline clothes checkout example](examples/commerce-checkout.mjs)
+**[Commerce Guard integration guide](docs/COMMERCE_GUARD_V0.1.md)** · [7-day sandbox integration pilot](docs/COMMERCE_PILOT.md) · [Shopping agent skill](skills/agentkyb-commerce-guard/SKILL.md) · [Offline clothes checkout example](examples/commerce-checkout.mjs)
 
 ```sh
 npm install github:Andy229651/agentkyb-agent-tools
